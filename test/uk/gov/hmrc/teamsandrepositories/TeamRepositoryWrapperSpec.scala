@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.teamsandrepositories
 
-import java.time.LocalDateTime
 import java.util.Date
 
 import org.scalatest.{Matchers, WordSpec}
@@ -44,9 +43,9 @@ class TeamRepositoryWrapperSpec extends WordSpec with Matchers {
         )
       )
       val wrapper: TeamRepositoryWrapper = new TeamRepositoryWrapper(teams)
-      val result: Seq[String] = wrapper.asServiceNameList
+      val result: Seq[RepositoryDisplayDetails] = wrapper.asServiceRepoDetailsList
 
-      result shouldBe List("repo1", "repo2")
+      result.map(_.name) shouldBe List("repo1", "repo2")
 
     }
 
@@ -59,12 +58,12 @@ class TeamRepositoryWrapperSpec extends WordSpec with Matchers {
       )
 
       val wrapper: TeamRepositoryWrapper = new TeamRepositoryWrapper(teams)
-      val result: Seq[String] = wrapper.asServiceNameList
+      val result: Seq[RepositoryDisplayDetails] = wrapper.asServiceRepoDetailsList
       result.size shouldBe 0
     }
   }
 
-  "asLibraryNameList" should {
+  "asLibraryRepoDetailsList" should {
     "not include libraries if one of the repository with same name is Deployable" in {
 
       val teams = Seq(
@@ -78,9 +77,9 @@ class TeamRepositoryWrapperSpec extends WordSpec with Matchers {
         TeamRepositories("teamNameOther", List(Repository("repo4", "Some description" , "", isInternal = true, repoType = RepoType.Library, createdDate = timestamp, lastActiveDate = timestamp)))
       )
       val wrapper: TeamRepositoryWrapper = new TeamRepositoryWrapper(teams)
-      val result: Seq[String] = wrapper.asLibraryNameList
+      val result: Seq[RepositoryDisplayDetails] = wrapper.asLibraryRepoDetailsList
 
-      result shouldBe List("repo3", "repo4")
+      result.map(_.name) shouldBe List("repo3", "repo4")
 
     }
 
@@ -97,9 +96,11 @@ class TeamRepositoryWrapperSpec extends WordSpec with Matchers {
         TeamRepositories("teamNameOther", List(Repository("repo4", "Some description" , "", isInternal = true, repoType = RepoType.Library, createdDate = timestamp, lastActiveDate = timestamp)))
       )
       val wrapper: TeamRepositoryWrapper = new TeamRepositoryWrapper(teams)
-      val result: Seq[String] = wrapper.asLibraryNameList
+      val result: Seq[RepositoryDisplayDetails] = wrapper.asLibraryRepoDetailsList
 
-      result shouldBe List("repo1", "repo3", "repo4")
+      result.map(_.name) shouldBe List("repo1", "repo3", "repo4")
+      result.map(_.createdAt) shouldBe List(timestamp,timestamp,timestamp)
+      result.map(_.lastUpdatedAt) shouldBe List(timestamp,timestamp,timestamp)
     }
 
   }

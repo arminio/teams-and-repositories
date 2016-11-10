@@ -18,21 +18,21 @@ package uk.gov.hmrc.teamsandrepositories
 
 import java.net.URLDecoder
 
+import play.api.libs.json.Json
 import uk.gov.hmrc.teamsandrepositories.RepoType.RepoType
 import uk.gov.hmrc.teamsandrepositories.config.{UrlTemplate, UrlTemplates}
 
-import scala.collection.immutable.::
-
 
 object TeamRepositoryWrapper {
+
 
   implicit class TeamRepositoryWrapper(teamRepos: Seq[TeamRepositories]) {
 
     def asTeamNameList = teamRepos.map(_.teamName)
 
-    def asServiceNameList = asNameListOfGivenRepoType(RepoType.Deployable)
+    def asServiceRepoDetailsList: Seq[RepositoryDisplayDetails] = asRepoDetailsOfGivenRepoType(RepoType.Deployable)
 
-    def asLibraryNameList: Seq[String] = asNameListOfGivenRepoType(RepoType.Library)
+    def asLibraryRepoDetailsList: Seq[RepositoryDisplayDetails] = asRepoDetailsOfGivenRepoType(RepoType.Library)
 
     def findRepositoryDetails(repoName: String, ciUrlTemplates: UrlTemplates): Option[RepositoryDetails] = {
       val decodedServiceName = URLDecoder.decode(repoName, "UTF-8")
@@ -105,6 +105,17 @@ object TeamRepositoryWrapper {
       repoNames
         .distinct
         .sortBy(_.toUpperCase)
+    }
+
+    private def asRepoDetailsOfGivenRepoType(repoType: RepoType.Value): Seq[RepositoryDisplayDetails] = {
+      val repoDetails = for {
+        d <- teamRepos
+        r <- extractRepositoryGroupForType(repoType, d.repositories)
+      } yield RepositoryDisplayDetails(r.name, r.createdDate, r.lastActiveDate)
+
+      repoDetails
+        .distinct
+        .sortBy(_.name.toUpperCase)
     }
 
 
