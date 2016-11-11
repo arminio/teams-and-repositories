@@ -18,7 +18,6 @@ package uk.gov.hmrc.teamsandrepositories
 
 import java.net.URLDecoder
 
-import play.api.libs.json.Json
 import uk.gov.hmrc.teamsandrepositories.RepoType.RepoType
 import uk.gov.hmrc.teamsandrepositories.config.{UrlTemplate, UrlTemplates}
 
@@ -73,14 +72,6 @@ object TeamRepositoryWrapper {
 
       }
     }
-//
-//    def asRepositoryTeamNameList(repoName: String): Option[Map[String, Seq[String]]] = {
-//      ???
-////      val decodedRepoName = URLDecoder.decode(repoName, "UTF-8")
-////      teamRepos.filter(_.repositories.exists(r => r.name == decodedRepoName)) match {
-////        case x if x.isEmpty => None
-////        case x => Some(x.map { repoName -> _.teamName } toMap) }
-//    }
 
     private case class RepositoryToTeam(repositoryName: String, teamName: String)
 
@@ -96,16 +87,16 @@ object TeamRepositoryWrapper {
 
     private case class RepositoriesToTeam(repositories: Seq[Repository], teamName: String)
 
-    private def asNameListOfGivenRepoType(repoType: RepoType.Value): Seq[String] = {
-      val repoNames = for {
-        d <- teamRepos
-        r <- extractRepositoryGroupForType(repoType, d.repositories)
-      } yield r.name
-
-      repoNames
-        .distinct
-        .sortBy(_.toUpperCase)
-    }
+//    private def asNameListOfGivenRepoType(repoType: RepoType.Value): Seq[String] = {
+//      val repoNames = for {
+//        d <- teamRepos
+//        r <- extractRepositoryGroupForType(repoType, d.repositories)
+//      } yield r.name
+//
+//      repoNames
+//        .distinct
+//        .sortBy(_.toUpperCase)
+//    }
 
     private def asRepoDetailsOfGivenRepoType(repoType: RepoType.Value): Seq[RepositoryDisplayDetails] = {
       val repoDetails = for {
@@ -114,7 +105,7 @@ object TeamRepositoryWrapper {
       } yield RepositoryDisplayDetails(r.name, r.createdDate, r.lastActiveDate)
 
       repoDetails
-        .distinct
+        .groupBy(_.name).map(_._2.head).toList
         .sortBy(_.name.toUpperCase)
     }
 

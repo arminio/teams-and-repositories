@@ -30,26 +30,23 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.teamsandrepositories.config.{UrlTemplate, UrlTemplates}
 
 import scala.concurrent.Future
-import scala.util.Random
 
 class TeamsServicesControllerSpec extends PlaySpec with MockitoSugar with Results with OptionValues {
 
   val timestamp = LocalDateTime.of(2016, 4, 5, 12, 57, 10)
 
-  val now = new Date().getTime
-  val random = new Random(System.nanoTime())
+  private val now = new Date().getTime
+  private val createdDateForDeployable1 = 1011111001l
+  private val createdDateForDeployable2 = 10111110012l
+  private val createdDateForDeployable3 = 10111110013l
+  private val lastActiveDateForDeployable1 = 10111110014l
+  private val lastActiveDateForDeployable2 = 10111110015l
+  private val lastActiveDateForDeployable3 = 10111110016l
 
-  val createdDateForDeployable1 = random.nextLong()
-  val createdDateForDeployable2 = random.nextLong()
-  val createdDateForDeployable3 = random.nextLong()
-  val lastActiveDateForDeployable1 = random.nextLong()
-  val lastActiveDateForDeployable2 = random.nextLong()
-  val lastActiveDateForDeployable3 = random.nextLong()
-
-  val createdDateForLib1 = random.nextLong()
-  val createdDateForLib2 = random.nextLong()
-  val lastActiveDateForLib1 = random.nextLong()
-  val lastActiveDateForLib2 = random.nextLong()
+  private val createdDateForLib1 = 10111110017l
+  private val createdDateForLib2 = 10111110017l
+  private val lastActiveDateForLib1 = 10111110020l
+  private val lastActiveDateForLib2 = 10111110021l
 
 
   def controllerWithData(data: CachedResult[Seq[TeamRepositories]]) = {
